@@ -1,0 +1,77 @@
+!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskTrack</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: #4CAF50;
+    }
+    input, button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #f9f9f9;
+      margin: 5px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>TaskTrack</h1>
+  <input type="text" id="taskInput" placeholder="Enter a task..." />
+  <button onclick="addTask()">Add Task</button>
+  <ul id="taskList"></ul>
+
+  <script>
+    // Function to fetch tasks from the backend
+    async function fetchTasks() {
+      const response = await fetch('http://127.0.0.1:5000/tasks');
+      const tasks = await response.json();
+      const taskList = document.getElementById('taskList');
+      taskList.innerHTML = '';
+      tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.textContent = task;
+        taskList.appendChild(li);
+      });
+    }
+
+    // Function to add a new task
+    async function addTask() {
+      const taskInput = document.getElementById('taskInput');
+      const task = taskInput.value;
+      if (task) {
+        await fetch('http://127.0.0.1:5000/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task }),
+        });
+        taskInput.value = '';
+        fetchTasks();
+      }
+    }
+
+    // Fetch tasks when the page loads
+    fetchTasks();
+  </script>
+</body>
+  </html>
+    
